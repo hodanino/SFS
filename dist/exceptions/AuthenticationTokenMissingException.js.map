@@ -1,0 +1,1 @@
+{"version":3,"file":"AuthenticationTokenMissingException.js","sourceRoot":"","sources":["../../src/exceptions/AuthenticationTokenMissingException.ts"],"names":[],"mappings":";;AAAA,MAAM,mCAAoC,SAAQ,KAAK;IAInD;QACE,KAAK,CAAC,8BAA8B,CAAC,CAAC;QACtC,IAAI,CAAC,MAAM,GAAG,GAAG,CAAC;QAClB,IAAI,CAAC,OAAO,GAAG,8BAA8B,CAAC;IAChD,CAAC;CACF;AAED,kBAAe,mCAAmC,CAAC"}
