@@ -8,6 +8,7 @@ export interface ITransaction extends Document {
   description: string;
   credit: number;
   debit: number;
+  comm: number;
 }
 
 // Define the Transaction schema

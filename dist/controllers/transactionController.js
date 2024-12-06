@@ -16,6 +16,7 @@ exports.getTransactions = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const Transaction_1 = __importDefault(require("../models/Transaction"));
 const getTransactions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("inside getTransactions");
     try {
         const { userId } = req.params;
         // Validate userId
@@ -27,6 +28,7 @@ const getTransactions = (req, res) => __awaiter(void 0, void 0, void 0, function
         const transactions = yield Transaction_1.default.find({ userId })
             .sort({ date: -1 })
             .limit(500);
+        console.log("the first tran:" + transactions[0]);
         res.status(200).json(transactions);
     }
     catch (error) {

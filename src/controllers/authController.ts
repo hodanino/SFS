@@ -4,10 +4,11 @@ import jwt from 'jsonwebtoken';
 import User, { IUser } from '../models/User';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
-    const { name, email, password, role } = req.body;
+    console.log("inside register");
+    const { name, email, password,excelName, role } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser: IUser = new User({ name, email, password: hashedPassword, role });
+        const newUser: IUser = new User({ name, email, password: hashedPassword, excelName, role });
         await newUser.save();
         res.status(201).json({ message: 'User created successfully' });
     } catch (error) {
@@ -16,6 +17,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
+    console.log("inside login");
     const { email, password } = req.body;
     try {
         const user = await User.findOne({ email });
@@ -29,7 +31,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             res.status(401).json({ error: 'Invalid credentials' });
             return;
         }
-
+        console.log("create an JWT");
         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET!, {
             expiresIn: '1h',
         });

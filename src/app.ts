@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes';
 import transactionRoutes from './routes/transactionRoutes';
+import { uploadExcel } from './controllers/excelController';
+import uploadExcelRoutes from './routes/uploadExcelRoutes';
 
 dotenv.config();
 
@@ -13,7 +15,7 @@ const PORT = process.env.PORT || 3000; // Add a default port if not specified in
 
 // MongoDB connection
 mongoose
-  .connect(process.env.MONGO_URI || 'mongodb://localhost:27017/swift')
+  .connect(process.env.MONGO_URI || 'mongodb://localhost:27017/test')
   .then(() => {
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
@@ -26,3 +28,4 @@ mongoose
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api', transactionRoutes);
+app.use('/api', uploadExcelRoutes);

@@ -17,10 +17,11 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = __importDefault(require("../models/User"));
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, email, password, role } = req.body;
+    console.log("inside register");
+    const { name, email, password, excelName, role } = req.body;
     try {
         const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-        const newUser = new User_1.default({ name, email, password: hashedPassword, role });
+        const newUser = new User_1.default({ name, email, password: hashedPassword, excelName, role });
         yield newUser.save();
         res.status(201).json({ message: 'User created successfully' });
     }
@@ -30,6 +31,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.register = register;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("inside login");
     const { email, password } = req.body;
     try {
         const user = yield User_1.default.findOne({ email });
@@ -42,6 +44,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.status(401).json({ error: 'Invalid credentials' });
             return;
         }
+        console.log("create an JWT");
         const token = jsonwebtoken_1.default.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
             expiresIn: '1h',
         });

@@ -18,29 +18,30 @@ const WrongAuthenticationTokenException_1 = __importDefault(require("../exceptio
 const User_1 = __importDefault(require("../models/User"));
 function authMiddleware(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log("AuthMiddleware: Verifying token");
         const authHeader = req.header('Authorization');
-        if (!authHeader) {
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return next(new AuthenticationTokenMissingException_1.default());
         }
         const token = authHeader.split(' ')[1];
         try {
             const secret = process.env.JWT_SECRET;
-            if (!secret) {
-                throw new Error('JWT_SECRET is not defined');
-            }
             const verificationResponse = jsonwebtoken_1.default.verify(token, secret);
             const userId = verificationResponse.id;
             const user = yield User_1.default.findById(userId);
             if (!user) {
+                console.error("User not found for ID:", userId);
                 return next(new WrongAuthenticationTokenException_1.default());
             }
             req.user = {
                 id: userId,
-                // Add other user properties if needed
+                role: user.role,
             };
+            console.log("AuthMiddleware: Token verified, user authenticated:", req.user);
             next();
         }
         catch (error) {
+            console.error("AuthMiddleware: JWT verification error:", error);
             next(new WrongAuthenticationTokenException_1.default());
         }
     });
