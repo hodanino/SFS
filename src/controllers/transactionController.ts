@@ -13,10 +13,9 @@ export const getTransactions = async (req: Request, res: Response): Promise<void
       return;
     }
 
-    // Fetch latest 500 transactions
     const transactions = await Transaction.find({ userId })
       .sort({ date: -1 })
-      .limit(500);
+      .limit(250);
 
     console.log("the first tran:" + transactions[0]);
     res.status(200).json(transactions);

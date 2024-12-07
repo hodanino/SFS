@@ -24,10 +24,9 @@ const getTransactions = (req, res) => __awaiter(void 0, void 0, void 0, function
             res.status(400).json({ error: 'Invalid user ID' });
             return;
         }
-        // Fetch latest 500 transactions
         const transactions = yield Transaction_1.default.find({ userId })
             .sort({ date: -1 })
-            .limit(500);
+            .limit(250);
         console.log("the first tran:" + transactions[0]);
         res.status(200).json(transactions);
     }
