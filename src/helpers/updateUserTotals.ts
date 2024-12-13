@@ -1,4 +1,4 @@
-import DataToUpdate from "../interfaces/updateTrans";
+import DataToUpdate from "../interfaces/UpdateTrans";
 import User from "../models/User";
 
 export const updateUserTotals = async (transaction: DataToUpdate): Promise<void> => {
