@@ -16,6 +16,7 @@ export interface IUser extends Document {
   totalDeals: number;
   totalPayouts: number;
   totalTransfers: number;
+  spreadsheetId: string;
 }
 
 const UserSchema: Schema = new Schema({
@@ -34,7 +35,7 @@ const UserSchema: Schema = new Schema({
   totalDeals: { type: Number, default: 0 },
   totalPayouts: { type: Number, default: 0 },
   totalTransfers: { type: Number, default: 0 },
-
+  spreadsheetId: { type: String, required: true },
 });
 
 export default mongoose.model<IUser>('User', UserSchema);

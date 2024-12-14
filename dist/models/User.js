@@ -50,6 +50,7 @@ const UserSchema = new mongoose_1.Schema({
     totalDeals: { type: Number, default: 0 },
     totalPayouts: { type: Number, default: 0 },
     totalTransfers: { type: Number, default: 0 },
+    spreadsheetId: { type: String, required: true },
 });
 exports.default = mongoose_1.default.model('User', UserSchema);
 //# sourceMappingURL=User.js.map

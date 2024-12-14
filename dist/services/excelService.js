@@ -16,8 +16,8 @@ exports.processExcelFile = void 0;
 const xlsx_1 = __importDefault(require("xlsx"));
 const excelNameToUserId_1 = require("../helpers/excelNameToUserId");
 const updateUserTotals_1 = require("../helpers/updateUserTotals");
-const Transaction_1 = __importDefault(require("../models/Transaction"));
 const googleSheetsController_1 = require("../googleSheets/controllers/googleSheetsController");
+const getSpreadsheetIdForUser_1 = require("../helpers/getSpreadsheetIdForUser");
 const processExcelFile = (fileBuffer) => __awaiter(void 0, void 0, void 0, function* () {
     const excelNameToUserIdMap = yield (0, excelNameToUserId_1.excelNameToUserId)();
     // Parse the Excel file
@@ -25,6 +25,7 @@ const processExcelFile = (fileBuffer) => __awaiter(void 0, void 0, void 0, funct
     const sheetName = workbook.SheetNames[0];
     const rawData = xlsx_1.default.utils.sheet_to_json(workbook.Sheets[sheetName]);
     const userWDUpdates = new Map();
+    const transactionsByUser = {};
     const cleanedData = rawData
         .map((row) => {
         const userId = excelNameToUserIdMap[row['Investor']];
@@ -33,10 +34,11 @@ const processExcelFile = (fileBuffer) => __awaiter(void 0, void 0, void 0, funct
             return null;
         }
         const credit = parseFloat(row['Balance']) || 0;
-        if (credit !== 0) {
-            userWDUpdates.set(userId, (userWDUpdates.get(userId) || 0) + credit);
-        }
-        return {
+        if (credit === 0)
+            return null;
+        // Update withdrawal totals
+        userWDUpdates.set(userId, (userWDUpdates.get(userId) || 0) + credit);
+        const transaction = {
             userId,
             date: new Date(),
             type: 'W/D',
@@ -44,14 +46,20 @@ const processExcelFile = (fileBuffer) => __awaiter(void 0, void 0, void 0, funct
             credit,
             debit: 0,
         };
+        // Group transactions by userId
+        if (!transactionsByUser[userId]) {
+            transactionsByUser[userId] = [];
+        }
+        transactionsByUser[userId].push(transaction);
+        return transaction;
     })
-        .filter((transaction) => transaction !== null && transaction.credit !== 0);
+        .filter((transaction) => transaction !== null);
     const validData = cleanedData.filter((transaction) => transaction.userId &&
         transaction.date &&
         transaction.type &&
         transaction.description &&
         transaction.credit > 0);
-    yield Transaction_1.default.insertMany(validData);
+    //await Transaction.insertMany(validData);
     const updates = [];
     userWDUpdates.forEach((totalWD, userId) => {
         updates.push({
@@ -62,16 +70,23 @@ const processExcelFile = (fileBuffer) => __awaiter(void 0, void 0, void 0, funct
     });
     yield Promise.all(updates.map((update) => (0, updateUserTotals_1.updateUserTotals)(update)));
     const sheetsController = new googleSheetsController_1.GoogleSheetsController();
-    const sheetData = validData.map(transaction => [
-        transaction.date.toISOString(),
-        transaction.type,
-        transaction.description,
-        transaction.credit
-    ]);
-    sheetData.forEach(row => {
-        console.log(`Date: ${row[0]}, Type: ${row[1]}, Description: ${row[2]}, Credit: ${row[3]}`);
-    });
-    yield sheetsController.uploadAndSyncTransactions(sheetData);
+    for (const [userId, transactions] of Object.entries(transactionsByUser)) {
+        const spreadsheetId = yield (0, getSpreadsheetIdForUser_1.getSpreadsheetIdForUser)(userId);
+        if (!spreadsheetId) {
+            console.warn(`No spreadsheet ID found for userId: ${userId}`);
+            continue;
+        }
+        const sheetData = transactions.map(transaction => [
+            transaction.date.toISOString(),
+            transaction.type,
+            transaction.description,
+            transaction.credit,
+        ]);
+        sheetData.forEach(row => {
+            console.log(`Date: ${row[0]}, Type: ${row[1]}, Description: ${row[2]}, Credit: ${row[3]}`);
+        });
+        yield sheetsController.uploadAndSyncTransactions(sheetData, spreadsheetId);
+    }
     return { savedCount: validData.length };
 });
 exports.processExcelFile = processExcelFile;

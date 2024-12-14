@@ -5,10 +5,10 @@ import User, { IUser } from '../models/User';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
     console.log("inside register");
-    const { name, email, password,excelName, role } = req.body;
+    const { name, email, password, excelName, role, spreadsheetId } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser: IUser = new User({ name, email, password: hashedPassword, excelName, role });
+        const newUser: IUser = new User({ name, email, password: hashedPassword, excelName, role, spreadsheetId });
         await newUser.save();
         res.status(201).json({ message: 'User created successfully' });
     } catch (error) {

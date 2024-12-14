@@ -4,10 +4,10 @@ import { GoogleSheetsService } from '../services/googleSheetsService';
 export class GoogleSheetsController {
   private googleSheetsService = new GoogleSheetsService();
 
-  async uploadAndSyncTransactions(transactions: any[]) {
+  async uploadAndSyncTransactions(transactions: any[], spreadsheetId: string) {
     try {
       console.log("inside googleSheetController");
-      const syncResult = await this.googleSheetsService.syncDataToSheet(transactions);
+      const syncResult = await this.googleSheetsService.syncDataToSheet(transactions, spreadsheetId);
       
       return {
         message: 'Transactions processed and synced',

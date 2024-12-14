@@ -8,21 +8,28 @@ export class GoogleSheetsService {
   private spreadsheetId: string;
 
   constructor() {
+    console.log("inside service constructure");
     const config = GoogleSheetsConfigManager.getInstance();
     const auth = config.createAuthClient();
     this.sheetsClient = google.sheets({ version: 'v4', auth });
-    this.spreadsheetId = config.config.spreadsheetId;
   }
 
-  async syncDataToSheet(data: any[], sheetName: string = 'Sheet1') {
+  async syncDataToSheet(data: any[], spreadsheetId: string) {
+    
+    this.spreadsheetId = spreadsheetId;
+    
     try {
       if (!data || data.length === 0) {
         throw new GoogleSheetsException('No data to sync');
       }
 
+      // console.log("Attempting to sync data to Google Sheets...");
+      console.log("Spreadsheet ID:", this.spreadsheetId);
+      // console.log("Data to sync:", data);
+
       const response = await this.sheetsClient.spreadsheets.values.append({
         spreadsheetId: this.spreadsheetId,
-        range: `${sheetName}!A:D`, 
+        range: `Sheet1!A:D`, 
         valueInputOption: 'RAW',
         insertDataOption: 'INSERT_ROWS',
         requestBody: {

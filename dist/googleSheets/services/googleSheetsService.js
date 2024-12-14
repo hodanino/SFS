@@ -18,21 +18,25 @@ const googleSheetsConfig_1 = require("../config/googleSheetsConfig");
 const GoogleSheetsException_1 = __importDefault(require("../exceptions/GoogleSheetsException"));
 class GoogleSheetsService {
     constructor() {
+        console.log("inside service constructure");
         const config = googleSheetsConfig_1.GoogleSheetsConfigManager.getInstance();
         const auth = config.createAuthClient();
         this.sheetsClient = googleapis_1.google.sheets({ version: 'v4', auth });
-        this.spreadsheetId = config.config.spreadsheetId;
     }
-    syncDataToSheet(data_1) {
-        return __awaiter(this, arguments, void 0, function* (data, sheetName = 'Sheet1') {
+    syncDataToSheet(data, spreadsheetId) {
+        return __awaiter(this, void 0, void 0, function* () {
             var _a;
+            this.spreadsheetId = spreadsheetId;
             try {
                 if (!data || data.length === 0) {
                     throw new GoogleSheetsException_1.default('No data to sync');
                 }
+                // console.log("Attempting to sync data to Google Sheets...");
+                console.log("Spreadsheet ID:", this.spreadsheetId);
+                // console.log("Data to sync:", data);
                 const response = yield this.sheetsClient.spreadsheets.values.append({
                     spreadsheetId: this.spreadsheetId,
-                    range: `${sheetName}!A:D`,
+                    range: `Sheet1!A:D`,
                     valueInputOption: 'RAW',
                     insertDataOption: 'INSERT_ROWS',
                     requestBody: {

@@ -18,10 +18,10 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = __importDefault(require("../models/User"));
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("inside register");
-    const { name, email, password, excelName, role } = req.body;
+    const { name, email, password, excelName, role, spreadsheetId } = req.body;
     try {
         const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-        const newUser = new User_1.default({ name, email, password: hashedPassword, excelName, role });
+        const newUser = new User_1.default({ name, email, password: hashedPassword, excelName, role, spreadsheetId });
         yield newUser.save();
         res.status(201).json({ message: 'User created successfully' });
     }
