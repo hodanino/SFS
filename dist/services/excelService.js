@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.processExcelFile = void 0;
 const xlsx_1 = __importDefault(require("xlsx"));
 const excelNameToUserId_1 = require("../helpers/excelNameToUserId");
+const updateUserTotals_1 = require("../helpers/updateUserTotals");
+const Transaction_1 = __importDefault(require("../models/Transaction"));
 const googleSheetsController_1 = require("../googleSheets/controllers/googleSheetsController");
 const processExcelFile = (fileBuffer) => __awaiter(void 0, void 0, void 0, function* () {
     const excelNameToUserIdMap = yield (0, excelNameToUserId_1.excelNameToUserId)();
@@ -49,7 +51,7 @@ const processExcelFile = (fileBuffer) => __awaiter(void 0, void 0, void 0, funct
         transaction.type &&
         transaction.description &&
         transaction.credit > 0);
-    //await Transaction.insertMany(validData);
+    yield Transaction_1.default.insertMany(validData);
     const updates = [];
     userWDUpdates.forEach((totalWD, userId) => {
         updates.push({
@@ -58,7 +60,7 @@ const processExcelFile = (fileBuffer) => __awaiter(void 0, void 0, void 0, funct
             amount: totalWD,
         });
     });
-    //await Promise.all(updates.map((update) => updateUserTotals(update)));
+    yield Promise.all(updates.map((update) => (0, updateUserTotals_1.updateUserTotals)(update)));
     const sheetsController = new googleSheetsController_1.GoogleSheetsController();
     const sheetData = validData.map(transaction => [
         transaction.date.toISOString(),

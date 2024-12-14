@@ -3,9 +3,7 @@ import { GoogleSheetsConfigManager } from '../config/googleSheetsConfig';
 import GoogleSheetsException from '../exceptions/GoogleSheetsException';
 
 export class GoogleSheetsService {
-    appendDataToSheet(sheetData: any[][]) {
-        throw new Error('Method not implemented.');
-    }
+    
   private sheetsClient: sheets_v4.Sheets;
   private spreadsheetId: string;
 
@@ -50,7 +48,7 @@ export class GoogleSheetsService {
     }
   }
 
-  // Optional: Method to read existing data
+  // Method to read existing data
   /*
   async readSheetData(range: string = 'Sheet1!A:Z') {
     try {
