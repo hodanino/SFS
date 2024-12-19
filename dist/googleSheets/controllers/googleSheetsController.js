@@ -19,11 +19,11 @@ class GoogleSheetsController {
     constructor() {
         this.googleSheetsService = new googleSheetsService_1.GoogleSheetsService();
     }
-    uploadAndSyncTransactions(transactions, spreadsheetId) {
+    uploadAndSyncTransactions(transactions, spreadsheetId, fileType) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 console.log("inside googleSheetController");
-                const syncResult = yield this.googleSheetsService.syncDataToSheet(transactions, spreadsheetId);
+                const syncResult = yield this.googleSheetsService.syncDataToSheet(transactions, spreadsheetId, fileType);
                 return {
                     message: 'Transactions processed and synced',
                     syncDetails: syncResult

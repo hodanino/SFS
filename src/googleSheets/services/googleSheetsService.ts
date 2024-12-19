@@ -1,6 +1,7 @@
 import { google, sheets_v4 } from 'googleapis';
 import { GoogleSheetsConfigManager } from '../config/googleSheetsConfig';
 import GoogleSheetsException from '../exceptions/GoogleSheetsException';
+import { formatSheetData } from '../helpers/sheetRange';
 
 export class GoogleSheetsService {
     
@@ -8,14 +9,14 @@ export class GoogleSheetsService {
   private spreadsheetId: string;
 
   constructor() {
-    console.log("inside service constructure");
+    console.log("inside service controller");
     const config = GoogleSheetsConfigManager.getInstance();
     const auth = config.createAuthClient();
     this.sheetsClient = google.sheets({ version: 'v4', auth });
   }
 
-  async syncDataToSheet(data: any[], spreadsheetId: string) {
-    
+  async syncDataToSheet(data: any[], spreadsheetId: string, fileType: 'WD' | 'Synd') {
+   
     this.spreadsheetId = spreadsheetId;
     
     try {
@@ -27,13 +28,15 @@ export class GoogleSheetsService {
       console.log("Spreadsheet ID:", this.spreadsheetId);
       // console.log("Data to sync:", data);
 
+      const { range, formattedData } = formatSheetData(data, fileType);
+
       const response = await this.sheetsClient.spreadsheets.values.append({
         spreadsheetId: this.spreadsheetId,
-        range: `Sheet1!A:D`, 
+        range, 
         valueInputOption: 'RAW',
         insertDataOption: 'INSERT_ROWS',
         requestBody: {
-          values: data
+          values: formattedData
         }
       });
 

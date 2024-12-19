@@ -16,14 +16,15 @@ exports.GoogleSheetsService = void 0;
 const googleapis_1 = require("googleapis");
 const googleSheetsConfig_1 = require("../config/googleSheetsConfig");
 const GoogleSheetsException_1 = __importDefault(require("../exceptions/GoogleSheetsException"));
+const sheetRange_1 = require("../helpers/sheetRange");
 class GoogleSheetsService {
     constructor() {
-        console.log("inside service constructure");
+        console.log("inside service controller");
         const config = googleSheetsConfig_1.GoogleSheetsConfigManager.getInstance();
         const auth = config.createAuthClient();
         this.sheetsClient = googleapis_1.google.sheets({ version: 'v4', auth });
     }
-    syncDataToSheet(data, spreadsheetId) {
+    syncDataToSheet(data, spreadsheetId, fileType) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             this.spreadsheetId = spreadsheetId;
@@ -34,13 +35,14 @@ class GoogleSheetsService {
                 // console.log("Attempting to sync data to Google Sheets...");
                 console.log("Spreadsheet ID:", this.spreadsheetId);
                 // console.log("Data to sync:", data);
+                const { range, formattedData } = (0, sheetRange_1.formatSheetData)(data, fileType);
                 const response = yield this.sheetsClient.spreadsheets.values.append({
                     spreadsheetId: this.spreadsheetId,
-                    range: `Sheet1!A:D`,
+                    range,
                     valueInputOption: 'RAW',
                     insertDataOption: 'INSERT_ROWS',
                     requestBody: {
-                        values: data
+                        values: formattedData
                     }
                 });
                 console.log(`Successfully synced ${data.length} rows`);

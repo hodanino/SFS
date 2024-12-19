@@ -7,15 +7,15 @@ import { GoogleSheetsController } from '../googleSheets/controllers/googleSheets
 import { getSpreadsheetIdForUser } from '../helpers/getSpreadsheetIdForUser';
 
 export const processExcelFile = async (fileBuffer: Buffer): Promise<{ savedCount: number }> => {
+    
+    console.log("inside processExcelFile");
     const excelNameToUserIdMap = await excelNameToUserId();
+    const userWDUpdates = new Map<string, number>();
+    const transactionsByInvestor: Record<string, any[]> = {};
 
-    // Parse the Excel file
     const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
     const rawData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-
-    const userWDUpdates = new Map<string, number>();
-    const transactionsByUser: Record<string, any[]> = {};
 
     const cleanedData = rawData
         .map((row: any) => {
@@ -43,10 +43,10 @@ export const processExcelFile = async (fileBuffer: Buffer): Promise<{ savedCount
                 debit: 0,
             };
 
-            if (!transactionsByUser[userId]) {
-                transactionsByUser[userId] = [];
+            if (!transactionsByInvestor[userId]) {
+                transactionsByInvestor[userId] = [];
             }
-            transactionsByUser[userId].push(transaction);
+            transactionsByInvestor[userId].push(transaction);
 
             return transaction;
         })
@@ -77,7 +77,7 @@ export const processExcelFile = async (fileBuffer: Buffer): Promise<{ savedCount
 
     const sheetsController = new GoogleSheetsController();
 
-    for (const [userId, transactions] of Object.entries(transactionsByUser)) {
+    for (const [userId, transactions] of Object.entries(transactionsByInvestor)) {
         const spreadsheetId = await getSpreadsheetIdForUser(userId); 
 
         if (!spreadsheetId) {
@@ -96,7 +96,7 @@ export const processExcelFile = async (fileBuffer: Buffer): Promise<{ savedCount
         //     console.log(`Date: ${row[0]}, Type: ${row[1]}, Description: ${row[2]}, Credit: ${row[3]}`);
         // });
 
-        await sheetsController.uploadAndSyncTransactions(sheetData, spreadsheetId);
+        await sheetsController.uploadAndSyncTransactions(sheetData, spreadsheetId, `WD`);
     }
 
     return { savedCount: validData.length };
