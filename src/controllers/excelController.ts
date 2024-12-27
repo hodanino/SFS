@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import path from 'path';
-import { processCSVFile } from '../services/excelSyndService';
+import { processSyndicationFile } from '../services/excelSyndCommService';
 import { processExcelFile } from '../services/excelWDService';
 
 export const uploadExcel = async (req: Request, res: Response): Promise<void> => {
@@ -20,30 +20,31 @@ export const uploadExcel = async (req: Request, res: Response): Promise<void> =>
             return;
         }
         
-        // Determine the file type
-        const mimeType = req.file.mimetype;
-        const extension = path.extname(req.file.originalname).toLowerCase();
-
+        const originalName = req.file.originalname;
+        
+        const isSyndicationFile = originalName.startsWith('Synd ');
+        
         let result;
-
-        if (mimeType === 'text/csv' || extension === '.csv') {
-            console.log("sent to processCSVFile");
-            result = await processCSVFile(req.file.buffer);
-        } else if (
-            mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-            mimeType === 'application/vnd.ms-excel' ||
-            extension === '.xlsx' ||
-            extension === '.xls'
-        ) {
-            console.log("sent to processExcelFile");
-            result = await processExcelFile(req.file.buffer);
+        if (isSyndicationFile) {
+            result = await processSyndicationFile(req.file.buffer);
+            res.status(200).json({ 
+                message: 'Syndication file processed successfully', 
+                savedCount: result.savedCount,
+                type: 'syndication'
+            });
         } else {
-            res.status(400).json({ error: 'Unsupported file type' });
-            return;
+            result = await processExcelFile(req.file.buffer);
+            res.status(200).json({ 
+                message: 'W/D file processed successfully', 
+                savedCount: result.savedCount,
+                type: 'withdrawal'
+            });
         }
-
-        res.status(200).json({ message: 'File processed successfully', savedCount: result.savedCount });
     } catch (error) {
-        res.status(500).json({ error: 'Failed to process file', details: error.message });
+        res.status(500).json({ 
+            error: 'Failed to process file', 
+            details: error.message,
+            filename: req.file?.originalname // Include filename in error for debugging
+        });
     }
 };

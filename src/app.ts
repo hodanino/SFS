@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors';  // Add this import
 import authRoutes from './routes/authRoutes';
 import transactionRoutes from './routes/transactionRoutes';
 import { uploadExcel } from './controllers/excelController';
@@ -9,9 +10,18 @@ import uploadExcelRoutes from './routes/uploadExcelRoutes';
 dotenv.config();
 
 const app: Application = express();
+
+// Add CORS middleware before other middleware
+app.use(cors({
+    origin: 'http://localhost:3000', // your frontend URL
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000; // Add a default port if not specified in .env
+const PORT = process.env.PORT || 3000;
 
 // MongoDB connection
 mongoose

@@ -2,9 +2,9 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 // Define the Transaction interface
 export interface ITransaction extends Document {
-  userId: mongoose.Types.ObjectId; // Reference to the user
+  userId: mongoose.Types.ObjectId; 
   date: Date;
-  type: 'Deposit' | 'Synd' | 'Comms' | 'W/D' | 'Transfer'; // Use enums for consistency
+  type: 'Deposit' | 'Synd' | 'Comms' | 'W/D' | 'Transfer'; 
   description: string;
   credit: number;
   debit: number;

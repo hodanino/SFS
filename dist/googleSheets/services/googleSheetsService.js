@@ -19,7 +19,7 @@ const GoogleSheetsException_1 = __importDefault(require("../exceptions/GoogleShe
 const sheetRange_1 = require("../helpers/sheetRange");
 class GoogleSheetsService {
     constructor() {
-        console.log("inside service controller");
+        console.log("inside google sheet service");
         const config = googleSheetsConfig_1.GoogleSheetsConfigManager.getInstance();
         const auth = config.createAuthClient();
         this.sheetsClient = googleapis_1.google.sheets({ version: 'v4', auth });

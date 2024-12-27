@@ -6,13 +6,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const cors_1 = __importDefault(require("cors")); // Add this import
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const transactionRoutes_1 = __importDefault(require("./routes/transactionRoutes"));
 const uploadExcelRoutes_1 = __importDefault(require("./routes/uploadExcelRoutes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
+// Add CORS middleware before other middleware
+app.use((0, cors_1.default)({
+    origin: 'http://localhost:3000', // your frontend URL
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express_1.default.json());
-const PORT = process.env.PORT || 3000; // Add a default port if not specified in .env
+const PORT = process.env.PORT || 3000;
 // MongoDB connection
 mongoose_1.default
     .connect(process.env.MONGO_URI || 'mongodb://localhost:27017/test')

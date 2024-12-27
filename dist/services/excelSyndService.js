@@ -13,10 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.processCSVFile = void 0;
-// src/services/csvSyndService.ts
 const csv_parser_1 = __importDefault(require("csv-parser"));
 const excelNameToUserId_1 = require("../helpers/excelNameToUserId");
-const updateUserTotals_1 = require("../helpers/updateUserTotals");
 const googleSheetsController_1 = require("../googleSheets/controllers/googleSheetsController");
 const getSpreadsheetIdForUser_1 = require("../helpers/getSpreadsheetIdForUser");
 const processCSVFile = (fileBuffer) => __awaiter(void 0, void 0, void 0, function* () {
@@ -82,7 +80,6 @@ const processCSVFile = (fileBuffer) => __awaiter(void 0, void 0, void 0, functio
             amount: totalAmount,
         });
     });
-    yield Promise.all(updates.map((update) => (0, updateUserTotals_1.updateUserTotals)(update)));
     const sheetsController = new googleSheetsController_1.GoogleSheetsController();
     for (const [userId, transactions] of Object.entries(transactionsByInvestor)) {
         const spreadsheetId = yield (0, getSpreadsheetIdForUser_1.getSpreadsheetIdForUser)(userId);

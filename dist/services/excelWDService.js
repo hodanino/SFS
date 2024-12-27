@@ -15,13 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.processExcelFile = void 0;
 const xlsx_1 = __importDefault(require("xlsx"));
 const excelNameToUserId_1 = require("../helpers/excelNameToUserId");
-const updateUserTotals_1 = require("../helpers/updateUserTotals");
 const googleSheetsController_1 = require("../googleSheets/controllers/googleSheetsController");
 const getSpreadsheetIdForUser_1 = require("../helpers/getSpreadsheetIdForUser");
 const processExcelFile = (fileBuffer) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("inside processExcelFile");
     const excelNameToUserIdMap = yield (0, excelNameToUserId_1.excelNameToUserId)();
-    const userWDUpdates = new Map();
     const transactionsByInvestor = {};
     const workbook = xlsx_1.default.read(fileBuffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
@@ -30,13 +28,12 @@ const processExcelFile = (fileBuffer) => __awaiter(void 0, void 0, void 0, funct
         .map((row) => {
         const userId = excelNameToUserIdMap[row['Investor']];
         if (!userId) {
-            //console.warn(`No userId found for Investor: ${row['Investor']}`);
+            console.warn(`No userId found for Investor: ${row['Investor']}`);
             return null;
         }
         const credit = parseFloat(row['Balance']) || 0;
         if (credit === 0)
             return null;
-        userWDUpdates.set(userId, (userWDUpdates.get(userId) || 0) + credit);
         const transaction = {
             userId,
             date: new Date(),
@@ -57,16 +54,6 @@ const processExcelFile = (fileBuffer) => __awaiter(void 0, void 0, void 0, funct
         transaction.type &&
         transaction.description &&
         transaction.credit > 0);
-    //await Transaction.insertMany(validData);
-    const updates = [];
-    userWDUpdates.forEach((totalWD, userId) => {
-        updates.push({
-            userId,
-            type: 'W/D',
-            amount: totalWD,
-        });
-    });
-    yield Promise.all(updates.map((update) => (0, updateUserTotals_1.updateUserTotals)(update)));
     const sheetsController = new googleSheetsController_1.GoogleSheetsController();
     for (const [userId, transactions] of Object.entries(transactionsByInvestor)) {
         const spreadsheetId = yield (0, getSpreadsheetIdForUser_1.getSpreadsheetIdForUser)(userId);

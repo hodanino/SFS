@@ -1,6 +1,5 @@
 import xlsx from 'xlsx';
 import { excelNameToUserId } from '../helpers/excelNameToUserId';
-import { updateUserTotals } from '../helpers/updateUserTotals';
 import Transaction from '../models/Transaction';
 import DataToUpdate from '../interfaces/UpdateTrans';
 import { GoogleSheetsController } from '../googleSheets/controllers/googleSheetsController';
@@ -10,7 +9,6 @@ export const processExcelFile = async (fileBuffer: Buffer): Promise<{ savedCount
     
     console.log("inside processExcelFile");
     const excelNameToUserIdMap = await excelNameToUserId();
-    const userWDUpdates = new Map<string, number>();
     const transactionsByInvestor: Record<string, any[]> = {};
 
     const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
@@ -28,11 +26,6 @@ export const processExcelFile = async (fileBuffer: Buffer): Promise<{ savedCount
             const credit = parseFloat(row['Balance']) || 0;
 
             if (credit === 0) return null;
-
-            userWDUpdates.set(
-                userId,
-                (userWDUpdates.get(userId) || 0) + credit
-            );
 
             const transaction = {
                 userId,
@@ -52,7 +45,6 @@ export const processExcelFile = async (fileBuffer: Buffer): Promise<{ savedCount
         })
         .filter((transaction) => transaction !== null);
 
-
     const validData = cleanedData.filter(
         (transaction) =>
             transaction.userId &&
@@ -61,19 +53,6 @@ export const processExcelFile = async (fileBuffer: Buffer): Promise<{ savedCount
             transaction.description &&
             transaction.credit > 0
     );
-
-    //await Transaction.insertMany(validData);
-
-    const updates: DataToUpdate[] = [];
-    userWDUpdates.forEach((totalWD, userId) => {
-        updates.push({
-            userId,
-            type: 'W/D',
-            amount: totalWD,
-        });
-    });
-
-    await Promise.all(updates.map((update) => updateUserTotals(update)));
 
     const sheetsController = new GoogleSheetsController();
 

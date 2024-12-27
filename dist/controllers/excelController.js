@@ -8,15 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadExcel = void 0;
-const path_1 = __importDefault(require("path"));
-const excelSyndService_1 = require("../services/excelSyndService");
+const excelSyndCommService_1 = require("../services/excelSyndCommService");
 const excelWDService_1 = require("../services/excelWDService");
 const uploadExcel = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         if (!req.user) {
             res.status(401).json({ error: 'Unauthorized: No user information' });
@@ -30,29 +27,32 @@ const uploadExcel = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             res.status(400).json({ error: 'No file uploaded' });
             return;
         }
-        // Determine the file type
-        const mimeType = req.file.mimetype;
-        const extension = path_1.default.extname(req.file.originalname).toLowerCase();
+        const originalName = req.file.originalname;
+        const isSyndicationFile = originalName.startsWith('Synd ');
         let result;
-        if (mimeType === 'text/csv' || extension === '.csv') {
-            console.log("sent to processCSVFile");
-            result = yield (0, excelSyndService_1.processCSVFile)(req.file.buffer);
-        }
-        else if (mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-            mimeType === 'application/vnd.ms-excel' ||
-            extension === '.xlsx' ||
-            extension === '.xls') {
-            console.log("sent to processExcelFile");
-            result = yield (0, excelWDService_1.processExcelFile)(req.file.buffer);
+        if (isSyndicationFile) {
+            result = yield (0, excelSyndCommService_1.processSyndicationFile)(req.file.buffer);
+            res.status(200).json({
+                message: 'Syndication file processed successfully',
+                savedCount: result.savedCount,
+                type: 'syndication'
+            });
         }
         else {
-            res.status(400).json({ error: 'Unsupported file type' });
-            return;
+            result = yield (0, excelWDService_1.processExcelFile)(req.file.buffer);
+            res.status(200).json({
+                message: 'W/D file processed successfully',
+                savedCount: result.savedCount,
+                type: 'withdrawal'
+            });
         }
-        res.status(200).json({ message: 'File processed successfully', savedCount: result.savedCount });
     }
     catch (error) {
-        res.status(500).json({ error: 'Failed to process file', details: error.message });
+        res.status(500).json({
+            error: 'Failed to process file',
+            details: error.message,
+            filename: (_a = req.file) === null || _a === void 0 ? void 0 : _a.originalname // Include filename in error for debugging
+        });
     }
 });
 exports.uploadExcel = uploadExcel;

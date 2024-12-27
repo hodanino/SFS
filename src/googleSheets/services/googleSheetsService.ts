@@ -9,7 +9,7 @@ export class GoogleSheetsService {
   private spreadsheetId: string;
 
   constructor() {
-    console.log("inside service controller");
+    console.log("inside google sheet service");
     const config = GoogleSheetsConfigManager.getInstance();
     const auth = config.createAuthClient();
     this.sheetsClient = google.sheets({ version: 'v4', auth });

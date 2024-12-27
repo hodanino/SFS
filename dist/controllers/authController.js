@@ -48,9 +48,10 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const token = jsonwebtoken_1.default.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
             expiresIn: '1h',
         });
-        res.status(200).json({ token });
+        res.status(200).json({ token, user });
     }
     catch (error) {
+        console.log("error creating JWT");
         res.status(500).json({ error: 'Server error' });
     }
 });
