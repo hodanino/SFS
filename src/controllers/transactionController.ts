@@ -1,3 +1,5 @@
+// I DONT NEED THIS FILE FOR NOW - CREATED FOR FETCHING TRANSACTIONS FOR USERS
+
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Transaction from '../models/Transaction';

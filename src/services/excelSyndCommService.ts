@@ -2,6 +2,7 @@ import xlsx from 'xlsx';
 import { excelNameToUserId } from '../helpers/excelNameToUserId';
 import { GoogleSheetsController } from '../googleSheets/controllers/googleSheetsController';
 import { getSpreadsheetIdForUser } from '../helpers/getSpreadsheetIdForUser';
+import downloadData from './downloadDataService';
 
 export const processSyndicationFile = async (fileBuffer: Buffer): Promise<{ savedCount: number }> => {
     console.log("inside processSyndicationFile");
@@ -63,6 +64,10 @@ export const processSyndicationFile = async (fileBuffer: Buffer): Promise<{ save
                     description: dealName,
                     amount: investorAmount
                 });
+
+                console.log('downloadData before is:', JSON.stringify(downloadData.getData(), null, 2));
+                downloadData.addDeal(dealName, investorName, investorAmount);
+                console.log('downloadData after is:', JSON.stringify(downloadData.getData(), null, 2));
             }
 
             if (commissionAmount > 0) {

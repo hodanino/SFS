@@ -17,6 +17,7 @@ const xlsx_1 = __importDefault(require("xlsx"));
 const excelNameToUserId_1 = require("../helpers/excelNameToUserId");
 const googleSheetsController_1 = require("../googleSheets/controllers/googleSheetsController");
 const getSpreadsheetIdForUser_1 = require("../helpers/getSpreadsheetIdForUser");
+const downloadDataService_1 = __importDefault(require("./downloadDataService"));
 const processSyndicationFile = (fileBuffer) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("inside processSyndicationFile");
     const excelNameToUserIdMap = yield (0, excelNameToUserId_1.excelNameToUserId)();
@@ -24,20 +25,19 @@ const processSyndicationFile = (fileBuffer) => __awaiter(void 0, void 0, void 0,
     const workbook = xlsx_1.default.read(fileBuffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
     const rawData = xlsx_1.default.utils.sheet_to_json(workbook.Sheets[sheetName]);
-    console.log("raw data: ");
-    console.log(rawData);
+    // console.log("raw data: ");
+    // console.log(rawData);
     const dealName = rawData[0]['Deal Name '] || 'Unknown Deal';
     const cleanedData = rawData
         .filter((row) => {
         var _a;
-        // Check if this is a valid investor row by looking for the investor name in the ' ' column
         const investorName = (_a = row[' ']) === null || _a === void 0 ? void 0 : _a.trim();
         const investorAmount = row['__EMPTY']; // Amount is in the __EMPTY column
         const commissions = row['__EMPTY_1']; // Commissions is in the __EMPTY_1 column
         const isValidRow = investorName &&
             typeof investorName === 'string' &&
-            !investorName.includes('TOTALS') && // Skip totals row
-            !investorName.includes('Investor Name') && // Skip header row
+            !investorName.includes('TOTALS') &&
+            !investorName.includes('Investor Name') &&
             typeof investorAmount === 'number' &&
             typeof commissions === 'number';
         if (!isValidRow) {
@@ -67,6 +67,9 @@ const processSyndicationFile = (fileBuffer) => __awaiter(void 0, void 0, void 0,
                 description: dealName,
                 amount: investorAmount
             });
+            console.log('downloadData before is:', JSON.stringify(downloadDataService_1.default.getData(), null, 2));
+            downloadDataService_1.default.addDeal(dealName, investorName, investorAmount);
+            console.log('downloadData after is:', JSON.stringify(downloadDataService_1.default.getData(), null, 2));
         }
         if (commissionAmount > 0) {
             transactions.push({
@@ -99,9 +102,9 @@ const processSyndicationFile = (fileBuffer) => __awaiter(void 0, void 0, void 0,
             transaction.description,
             transaction.amount,
         ]);
-        sheetData.forEach(row => {
-            console.log(`Date: ${row[0]}, Type: ${row[1]}, Description: ${row[2]}, Credit: ${row[3]}`);
-        });
+        // sheetData.forEach(row => {
+        //     console.log(`Date: ${row[0]}, Type: ${row[1]}, Description: ${row[2]}, Credit: ${row[3]}`);
+        // });
         yield sheetsController.uploadAndSyncTransactions(sheetData, spreadsheetId, 'Synd');
     }
     return { savedCount: cleanedData.length };

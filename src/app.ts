@@ -1,11 +1,12 @@
 import express, { Application } from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import cors from 'cors';  // Add this import
+import cors from 'cors';  
 import authRoutes from './routes/authRoutes';
 import transactionRoutes from './routes/transactionRoutes';
 import { uploadExcel } from './controllers/excelController';
 import uploadExcelRoutes from './routes/uploadExcelRoutes';
+import uploadDealsStorageRoutes from './routes/uploadedDealsStorageRoutes';
 
 dotenv.config();
 
@@ -13,7 +14,7 @@ const app: Application = express();
 
 // Add CORS middleware before other middleware
 app.use(cors({
-    origin: 'http://localhost:3000', // your frontend URL
+    origin: 'http://localhost:3000', // frontend URL
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -39,3 +40,4 @@ mongoose
 app.use('/api/auth', authRoutes);
 app.use('/api', transactionRoutes);
 app.use('/api', uploadExcelRoutes);
+app.use('/api/storage', uploadDealsStorageRoutes);
