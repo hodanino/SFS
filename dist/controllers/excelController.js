@@ -34,6 +34,7 @@ const uploadExcel = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             result = yield (0, excelSyndCommService_1.processSyndicationFile)(req.file.buffer);
             res.status(200).json({
                 message: 'Syndication file processed successfully',
+                fileName: originalName,
                 savedCount: result.savedCount,
                 type: 'syndication'
             });
@@ -42,6 +43,7 @@ const uploadExcel = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             result = yield (0, excelWDService_1.processExcelFile)(req.file.buffer);
             res.status(200).json({
                 message: 'W/D file processed successfully',
+                fileName: originalName,
                 savedCount: result.savedCount,
                 type: 'withdrawal'
             });

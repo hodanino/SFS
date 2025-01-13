@@ -27,12 +27,12 @@ export const downloadTemporaryStorage = (req: Request, res: Response) => {
     }
 
     const csvRows: string[] = [];
-    csvRows.push('Deal Name,Investor Name,Amount');
+    csvRows.push('Investor Name, Merchant Name, Deal Name, Investor %, Investor Amount, Fee Collection Type, Fee1 Name, Fee1 %, Fee1 % Payback or Advance, Fee1 $, Fee1 Front End, Fee2 Name, Fee2 %, Fee2 % Payback or Advance	Fee2 $, Fee2 Front End, Fee3 Name, Fee3 %, Fee3 % Payback or Advance, Fee3 $, Fee3 Front End, Fee4 Name, Fee4 %, Fee4 % Payback or Advance, Fee4 $, Fee4 Front End');
 
     Object.keys(storage).forEach(dealName => {
         const investors = storage[dealName].investors;
         investors.forEach(({ investorName, investorAmount }) => {
-            csvRows.push(`${dealName},${investorName},${investorAmount}`);
+            csvRows.push(`${investorName},${dealName},${dealName}, ,${investorAmount}`);
         });
     });
 

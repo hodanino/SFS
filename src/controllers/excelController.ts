@@ -28,14 +28,16 @@ export const uploadExcel = async (req: Request, res: Response): Promise<void> =>
         if (isSyndicationFile) {
             result = await processSyndicationFile(req.file.buffer);
             res.status(200).json({ 
-                message: 'Syndication file processed successfully', 
+                message: 'Syndication file processed successfully',
+                fileName: originalName, 
                 savedCount: result.savedCount,
                 type: 'syndication'
             });
         } else {
             result = await processExcelFile(req.file.buffer);
             res.status(200).json({ 
-                message: 'W/D file processed successfully', 
+                message: 'W/D file processed successfully',
+                fileName: originalName,  
                 savedCount: result.savedCount,
                 type: 'withdrawal'
             });
