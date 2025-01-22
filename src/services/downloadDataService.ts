@@ -1,9 +1,9 @@
 class DownloadData {
-    
+
     private time: Date | null = null;
     private data: Record<string, { investors: { investorName: string; investorAmount: number }[] }> = {};
 
-    // Method to check and update the time field
+    // check and update the time field
     private updateTime() {
         const now = new Date();
         if (!this.time || now.getTime() - this.time.getTime() >= 24 * 60 * 60 * 1000) {
@@ -12,7 +12,7 @@ class DownloadData {
         }
     }
 
-    // Method to add a deal and investor data
+    // add a deal and investor data
     addDeal(dealName: string, investorName: string, investorAmount: number) {
         this.updateTime(); 
 
@@ -23,9 +23,15 @@ class DownloadData {
         this.data[dealName].investors.push({ investorName, investorAmount });
     }
 
-    // Method to retrieve the data for CSV download
+    // retrieve the data for CSV download
     getData() {
         return this.data;
+    }
+
+    deleteDeal(dealName: string) {
+        if (dealName in this.data) {
+            delete this.data[dealName];
+        }
     }
 }
 

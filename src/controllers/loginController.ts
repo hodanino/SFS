@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User, { IUser } from '../models/User';
+import { LoginUserDto } from '../dtos/LoginUserDto';
+import { validate } from 'class-validator';
+import { plainToInstance } from 'class-transformer';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
     console.log("inside register");
@@ -18,6 +21,20 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
 export const login = async (req: Request, res: Response): Promise<void> => {
     console.log("inside login");
+    const loginUserDto = plainToInstance(LoginUserDto, req.body);
+    const errors = await validate(loginUserDto);
+
+    if (errors.length > 0) {
+        res.status(400).json({
+            message: 'Validation failed',
+            errors: errors.map(err => ({
+                field: err.property,
+                messages: Object.values(err.constraints || {}),
+            })),
+        });
+        return;
+    }
+    
     const { email, password } = req.body;
     try {
         const user = await User.findOne({ email });

@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login } from '../controllers/authController';
+import { register, login } from '../controllers/loginController';
 import authMiddleware from '../middleware/authMiddleware';
 
 const router = express.Router();
@@ -7,9 +7,8 @@ const router = express.Router();
 router.post('/register', register);
 router.post('/login', login);
 
-// Protected route: Fetch user profile
 router.get('/profile', authMiddleware, (req, res) => {
-  const user = req.user; // This is populated by the middleware
+  const user = req.user; 
   res.status(200).json({ message: 'User profile data', user });
 });
 

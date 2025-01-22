@@ -5,7 +5,7 @@ class DownloadData {
         this.time = null;
         this.data = {};
     }
-    // Method to check and update the time field
+    // check and update the time field
     updateTime() {
         const now = new Date();
         if (!this.time || now.getTime() - this.time.getTime() >= 24 * 60 * 60 * 1000) {
@@ -13,7 +13,7 @@ class DownloadData {
             this.data = {};
         }
     }
-    // Method to add a deal and investor data
+    // add a deal and investor data
     addDeal(dealName, investorName, investorAmount) {
         this.updateTime();
         if (!this.data[dealName]) {
@@ -21,9 +21,14 @@ class DownloadData {
         }
         this.data[dealName].investors.push({ investorName, investorAmount });
     }
-    // Method to retrieve the data for CSV download
+    // retrieve the data for CSV download
     getData() {
         return this.data;
+    }
+    deleteDeal(dealName) {
+        if (dealName in this.data) {
+            delete this.data[dealName];
+        }
     }
 }
 const downloadData = new DownloadData();

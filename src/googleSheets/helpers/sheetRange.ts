@@ -9,11 +9,11 @@ export function formatSheetData(data: any[], fileType: 'WD' | 'Synd') {
     } else if (fileType === 'Synd') {
       range = `Sheet1!A:E`;
       formattedData = data.map(row => [
-        row[0], // Column A
-        row[1], // Column B
-        row[2], // Column C
-        '',     // Placeholder for column D
-        row[3], // Column E (amount goes to debit column)
+        row[0], 
+        row[1], 
+        row[2], 
+        '',     
+        row[3], 
       ]);
     } else {
       throw new Error('Unsupported file type');

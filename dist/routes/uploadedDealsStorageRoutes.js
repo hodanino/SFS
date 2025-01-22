@@ -9,5 +9,6 @@ const authMiddleware_1 = __importDefault(require("../middleware/authMiddleware")
 const router = (0, express_1.Router)();
 router.get('/download-storage', authMiddleware_1.default, storageController_1.downloadTemporaryStorage);
 router.get('/get-storage', authMiddleware_1.default, storageController_1.getCurrentStorage);
+router.delete('/delete-deal/:dealName', authMiddleware_1.default, storageController_1.deleteDeal);
 exports.default = router;
 //# sourceMappingURL=uploadedDealsStorageRoutes.js.map
