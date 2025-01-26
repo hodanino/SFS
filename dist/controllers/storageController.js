@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteDeal = exports.downloadTemporaryStorage = exports.getCurrentStorage = void 0;
 const downloadDataService_1 = __importDefault(require("../services/downloadDataService"));
-//TODO: need to test this function more - it worked the last time but not consistently
 const getCurrentStorage = (req, res) => {
     try {
         const storage = downloadDataService_1.default.getData();

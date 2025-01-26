@@ -13,7 +13,6 @@ const uploadExcelRoutes_1 = __importDefault(require("./routes/uploadExcelRoutes"
 const uploadedDealsStorageRoutes_1 = __importDefault(require("./routes/uploadedDealsStorageRoutes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-// Add CORS middleware before other middleware
 app.use((0, cors_1.default)({
     origin: 'http://localhost:3000', // frontend URL
     credentials: true,

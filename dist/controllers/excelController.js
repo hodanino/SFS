@@ -28,6 +28,7 @@ const uploadExcel = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             return;
         }
         const originalName = req.file.originalname;
+        //TODO: check if not starts with 'Synd' it should start with 'syndication' - else throw exs
         const isSyndicationFile = originalName.startsWith('Synd ');
         let result;
         if (isSyndicationFile) {

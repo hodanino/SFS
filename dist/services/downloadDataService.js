@@ -5,7 +5,6 @@ class DownloadData {
         this.time = null;
         this.data = {};
     }
-    // check and update the time field
     updateTime() {
         const now = new Date();
         if (!this.time || now.getTime() - this.time.getTime() >= 24 * 60 * 60 * 1000) {
@@ -13,7 +12,6 @@ class DownloadData {
             this.data = {};
         }
     }
-    // add a deal and investor data
     addDeal(dealName, investorName, investorAmount) {
         this.updateTime();
         if (!this.data[dealName]) {
@@ -21,7 +19,6 @@ class DownloadData {
         }
         this.data[dealName].investors.push({ investorName, investorAmount });
     }
-    // retrieve the data for CSV download
     getData() {
         return this.data;
     }

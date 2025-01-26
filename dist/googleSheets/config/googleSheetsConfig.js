@@ -13,7 +13,7 @@ class GoogleSheetsConfigManager {
         const clientEmail = process.env.GOOGLE_SHEETS_CLIENT_EMAIL;
         const privateKey = (_a = process.env.GOOGLE_SHEETS_PRIVATE_KEY) === null || _a === void 0 ? void 0 : _a.replace(/\\n/g, '\n');
         if (!clientEmail || !privateKey) {
-            throw new Error('Missing Google Sheets configuration. Check your .env file.');
+            throw new Error('Missing Google Sheets configuration');
         }
         this.config = {
             clientEmail,

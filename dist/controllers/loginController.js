@@ -19,8 +19,21 @@ const User_1 = __importDefault(require("../models/User"));
 const LoginUserDto_1 = require("../dtos/LoginUserDto");
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
+const RegisterUserDto_1 = require("../dtos/RegisterUserDto");
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("inside register");
+    const registerDto = (0, class_transformer_1.plainToInstance)(RegisterUserDto_1.RegisterUserDto, req.body); // Transform request body to DTO instance
+    const errors = yield (0, class_validator_1.validate)(registerDto);
+    if (errors.length > 0) {
+        res.status(400).json({
+            message: 'Validation failed',
+            errors: errors.map(err => ({
+                field: err.property,
+                messages: Object.values(err.constraints || {}),
+            })),
+        });
+        return;
+    }
     const { name, email, password, excelName, role, spreadsheetId } = req.body;
     try {
         const hashedPassword = yield bcrypt_1.default.hash(password, 10);

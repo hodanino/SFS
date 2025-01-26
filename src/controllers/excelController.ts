@@ -21,7 +21,7 @@ export const uploadExcel = async (req: Request, res: Response): Promise<void> =>
         }
         
         const originalName = req.file.originalname;
-        
+        //TODO: check if not starts with 'Synd' it should start with 'syndication' - else throw exs
         const isSyndicationFile = originalName.startsWith('Synd ');
         
         let result;

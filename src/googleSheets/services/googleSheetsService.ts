@@ -2,6 +2,7 @@ import { google, sheets_v4 } from 'googleapis';
 import { GoogleSheetsConfigManager } from '../config/googleSheetsConfig';
 import GoogleSheetsException from '../exceptions/GoogleSheetsException';
 import { formatSheetData } from '../helpers/sheetRange';
+import { retryWithExponentialBackoff } from './retryWithExponentialBackoff';
 
 export class GoogleSheetsService {
     
@@ -25,20 +26,22 @@ export class GoogleSheetsService {
       }
 
       // console.log("Attempting to sync data to Google Sheets...");
-      console.log("Spreadsheet ID:", this.spreadsheetId);
-      // console.log("Data to sync:", data);
+      // console.log("Spreadsheet ID:", this.spreadsheetId);
+      console.log("Data to sync:", data);
 
       const { range, formattedData } = formatSheetData(data, fileType);
 
-      const response = await this.sheetsClient.spreadsheets.values.append({
-        spreadsheetId: this.spreadsheetId,
-        range, 
-        valueInputOption: 'RAW',
-        insertDataOption: 'INSERT_ROWS',
-        requestBody: {
-          values: formattedData
-        }
-      });
+      const response = await retryWithExponentialBackoff(() =>
+        this.sheetsClient.spreadsheets.values.append({
+          spreadsheetId: this.spreadsheetId,
+          range,
+          valueInputOption: 'RAW',
+          insertDataOption: 'INSERT_ROWS',
+          requestBody: {
+            values: formattedData,
+          },
+        })
+      );
 
       console.log(`Successfully synced ${data.length} rows`);
       return {

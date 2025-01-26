@@ -17,6 +17,7 @@ const googleapis_1 = require("googleapis");
 const googleSheetsConfig_1 = require("../config/googleSheetsConfig");
 const GoogleSheetsException_1 = __importDefault(require("../exceptions/GoogleSheetsException"));
 const sheetRange_1 = require("../helpers/sheetRange");
+const retryWithExponentialBackoff_1 = require("./retryWithExponentialBackoff");
 class GoogleSheetsService {
     constructor() {
         console.log("inside google sheet service");
@@ -33,18 +34,18 @@ class GoogleSheetsService {
                     throw new GoogleSheetsException_1.default('No data to sync');
                 }
                 // console.log("Attempting to sync data to Google Sheets...");
-                console.log("Spreadsheet ID:", this.spreadsheetId);
-                // console.log("Data to sync:", data);
+                // console.log("Spreadsheet ID:", this.spreadsheetId);
+                console.log("Data to sync:", data);
                 const { range, formattedData } = (0, sheetRange_1.formatSheetData)(data, fileType);
-                const response = yield this.sheetsClient.spreadsheets.values.append({
+                const response = yield (0, retryWithExponentialBackoff_1.retryWithExponentialBackoff)(() => this.sheetsClient.spreadsheets.values.append({
                     spreadsheetId: this.spreadsheetId,
                     range,
                     valueInputOption: 'RAW',
                     insertDataOption: 'INSERT_ROWS',
                     requestBody: {
-                        values: formattedData
-                    }
-                });
+                        values: formattedData,
+                    },
+                }));
                 console.log(`Successfully synced ${data.length} rows`);
                 return {
                     updatedRows: ((_a = response.data.updates) === null || _a === void 0 ? void 0 : _a.updatedRows) || 0,

@@ -5,7 +5,7 @@ export function formatSheetData(data: any[], fileType: 'WD' | 'Synd') {
   
     if (fileType === 'WD') {
       range = `Sheet1!A:D`;
-      formattedData = data; // Use data as is
+      formattedData = data; 
     } else if (fileType === 'Synd') {
       range = `Sheet1!A:E`;
       formattedData = data.map(row => [

@@ -20,10 +20,6 @@ __decorate([
 ], LoginUserDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsString)({ message: 'Password must be a string' }),
-    (0, class_validator_1.MinLength)(8, { message: 'Password must be at least 8 characters long' }),
-    (0, class_validator_1.Matches)(/^(?=.*[a-z])(?=.*[A-Z]).+$/, {
-        message: 'Password must contain at least one uppercase and one lowercase letter',
-    }),
     __metadata("design:type", String)
 ], LoginUserDto.prototype, "password", void 0);
 //# sourceMappingURL=LoginUserDto.js.map

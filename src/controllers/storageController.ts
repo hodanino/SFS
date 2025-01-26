@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import downloadData from '../services/downloadDataService';
 
-//TODO: need to test this function more - it worked the last time but not consistently
 export const getCurrentStorage = (req: Request, res: Response) => {
     try {
         const storage = downloadData.getData();

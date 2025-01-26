@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getSpreadsheetIdForUser = void 0;
-const User_1 = __importDefault(require("../models/User")); // Replace with the path to your User model
+const User_1 = __importDefault(require("../models/User"));
 const getSpreadsheetIdForUser = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield User_1.default.findById(userId).select('spreadsheetId').lean();

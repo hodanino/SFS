@@ -1,4 +1,4 @@
-import User from '../models/User'; // Replace with the path to your User model
+import User from '../models/User'; 
 
 export const getSpreadsheetIdForUser = async (userId: string): Promise<string | null> => {
     try {

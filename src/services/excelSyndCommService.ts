@@ -65,9 +65,9 @@ export const processSyndicationFile = async (fileBuffer: Buffer): Promise<{ save
                     amount: investorAmount
                 });
 
-                console.log('downloadData before is:', JSON.stringify(downloadData.getData(), null, 2));
+                //console.log('downloadData before is:', JSON.stringify(downloadData.getData(), null, 2));
                 downloadData.addDeal(dealName, investorName, investorAmount);
-                console.log('downloadData after is:', JSON.stringify(downloadData.getData(), null, 2));
+                //console.log('downloadData after is:', JSON.stringify(downloadData.getData(), null, 2));
             }
 
             if (commissionAmount > 0) {
@@ -90,30 +90,35 @@ export const processSyndicationFile = async (fileBuffer: Buffer): Promise<{ save
         .filter((transactions) => transactions !== null)
         .flat();
 
-    console.log("clean data size: " + cleanedData.length);
+    //console.log("clean data size: " + cleanedData.length);
 
     const sheetsController = new GoogleSheetsController();
 
     for (const [userId, transactions] of Object.entries(transactionsByInvestor)) {
-        const spreadsheetId = await getSpreadsheetIdForUser(userId);
+        try{    
+            const spreadsheetId = await getSpreadsheetIdForUser(userId);
 
-        if (!spreadsheetId) {
-            console.warn(`No spreadsheet ID found for userId: ${userId}`);
-            continue;
+            if (!spreadsheetId) {
+                console.warn(`No spreadsheet ID found for userId: ${userId}`);
+                continue;
+            }
+
+            const sheetData = transactions.map(transaction => [
+                transaction.date.toLocaleDateString('en-US'),
+                transaction.type,
+                transaction.description,
+                transaction.amount,
+            ]);
+
+            try{
+                await sheetsController.uploadAndSyncTransactions(sheetData, spreadsheetId, 'Synd');
+                console.log(`Successfully synced transactions for userId: ${userId}`);
+            } catch (syncError) {
+                console.error(`Failed to sync transactions for userId: ${userId}`, syncError);
+            }
+        } catch (error) {
+            console.error(`Error processing transactions for userId: ${userId}`, error);
         }
-
-        const sheetData = transactions.map(transaction => [
-            transaction.date.toISOString(),
-            transaction.type,
-            transaction.description,
-            transaction.amount,
-        ]);
-
-        // sheetData.forEach(row => {
-        //     console.log(`Date: ${row[0]}, Type: ${row[1]}, Description: ${row[2]}, Credit: ${row[3]}`);
-        // });
-
-        await sheetsController.uploadAndSyncTransactions(sheetData, spreadsheetId, 'Synd');
     }
 
     return { savedCount: cleanedData.length };
