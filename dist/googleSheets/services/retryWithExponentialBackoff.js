@@ -10,21 +10,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.retryWithExponentialBackoff = retryWithExponentialBackoff;
+//TODO: improve this mechanism to retry specific errors 
 function retryWithExponentialBackoff(operation_1) {
-    return __awaiter(this, arguments, void 0, function* (operation, // Function to retry
-    retries = 3, // Number of retries
-    delay = 500 // Initial delay (in ms)
-    ) {
+    return __awaiter(this, arguments, void 0, function* (operation, retries = 3, delay = 500) {
         try {
-            return yield operation(); // Try the operation
+            return yield operation();
         }
         catch (error) {
             if (retries <= 0)
-                throw error; // No more retries left, throw the error
+                throw error;
             console.log(`Retrying operation... (${retries} retries left)`);
-            // Wait for 'delay' ms before retrying
             yield new Promise((resolve) => setTimeout(resolve, delay));
-            // Retry with exponential backoff (double the delay each time)
             return retryWithExponentialBackoff(operation, retries - 1, delay * 2);
         }
     });

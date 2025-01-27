@@ -42,8 +42,7 @@ __decorate([
     __metadata("design:type", String)
 ], RegisterUserDto.prototype, "role", void 0);
 __decorate([
-    (0, class_validator_1.IsOptional)() // Allow this field to be optional in case it is not required for all users
-    ,
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)({ message: 'Spreadsheet ID must be a string' }),
     __metadata("design:type", String)
 ], RegisterUserDto.prototype, "spreadsheetId", void 0);

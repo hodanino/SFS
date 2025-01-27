@@ -38,7 +38,7 @@ const UserSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    excelName: { type: String, required: true },
+    excelName: { type: String, required: true, unique: true },
     role: { type: String, enum: ['admin', 'investor'], default: 'investor' },
     spreadsheetId: { type: String, required: true },
 });

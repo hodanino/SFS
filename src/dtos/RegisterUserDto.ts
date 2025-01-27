@@ -23,7 +23,7 @@ export class RegisterUserDto {
     @IsIn(['admin', 'investor'], { message: 'Role must be either "admin" or "investor"' })
     role: string;
 
-    @IsOptional() // Allow this field to be optional in case it is not required for all users
+    @IsOptional() 
     @IsString({ message: 'Spreadsheet ID must be a string' })
     spreadsheetId: string;
 }
