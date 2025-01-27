@@ -16,7 +16,7 @@ export const getCurrentStorage = (req: Request, res: Response) => {
     }
 };
 
-//TODO: need to test this function and see that the csv structure is correct
+// TODO: more tests for this function
 export const downloadTemporaryStorage = (req: Request, res: Response) => {
     try {
         const storage = downloadData.getData();

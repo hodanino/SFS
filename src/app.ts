@@ -35,7 +35,6 @@ mongoose
     console.error('Database connection error:', err);
   });
 
-// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api', transactionRoutes);
 app.use('/api', uploadExcelRoutes);

@@ -1,6 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-// Define the Transaction interface
 export interface ITransaction extends Document {
   userId: mongoose.Types.ObjectId; 
   date: Date;
@@ -11,7 +10,6 @@ export interface ITransaction extends Document {
   comm: number;
 }
 
-// Define the Transaction schema
 const TransactionSchema: Schema = new Schema<ITransaction>({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   date: { type: Date, required: true },
@@ -21,5 +19,4 @@ const TransactionSchema: Schema = new Schema<ITransaction>({
   debit: { type: Number, default: 0 },
 });
 
-// Create the Transaction model
 export default mongoose.model<ITransaction>('Transaction', TransactionSchema);

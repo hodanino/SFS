@@ -61,7 +61,7 @@ export class GoogleSheetsService {
     }
   }
 
-  // Method to read existing data
+  // Method to read existing data - not needed for now
   /*
   async readSheetData(range: string = 'Sheet1!A:Z') {
     try {

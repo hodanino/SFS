@@ -9,7 +9,6 @@ export const getTransactions = async (req: Request, res: Response): Promise<void
     try {
     const { userId } = req.params;
 
-    // Validate userId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       res.status(400).json({ error: 'Invalid user ID' });
       return;

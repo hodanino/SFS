@@ -8,9 +8,8 @@ import { plainToInstance } from 'class-transformer';
 import { RegisterUserDto } from '../dtos/RegisterUserDto';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
-    console.log("inside register");
-    const registerDto = plainToInstance(RegisterUserDto, req.body); // Transform request body to DTO instance
-
+    //TODO: add email and excelName check for uniquness 
+    const registerDto = plainToInstance(RegisterUserDto, req.body); 
     const errors = await validate(registerDto);
 
     if (errors.length > 0) {

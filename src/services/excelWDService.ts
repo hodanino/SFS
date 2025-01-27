@@ -5,7 +5,7 @@ import DataToUpdate from '../interfaces/UpdateTrans';
 import { GoogleSheetsController } from '../googleSheets/controllers/googleSheetsController';
 import { getSpreadsheetIdForUser } from '../helpers/getSpreadsheetIdForUser';
 
-export const processExcelFile = async (fileBuffer: Buffer): Promise<{ savedCount: number }> => {
+export const processExcelWDFile = async (fileBuffer: Buffer): Promise<{ savedCount: number }> => {
     
     console.log("inside processExcelFile");
     const excelNameToUserIdMap = await excelNameToUserId();

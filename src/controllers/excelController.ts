@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import path from 'path';
 import { processSyndicationFile } from '../services/excelSyndCommService';
-import { processExcelFile } from '../services/excelWDService';
+import { processExcelWDFile } from '../services/excelWDService';
 
 export const uploadExcel = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -34,7 +34,7 @@ export const uploadExcel = async (req: Request, res: Response): Promise<void> =>
                 type: 'syndication'
             });
         } else {
-            result = await processExcelFile(req.file.buffer);
+            result = await processExcelWDFile(req.file.buffer);
             res.status(200).json({ 
                 message: 'W/D file processed successfully',
                 fileName: originalName,  
